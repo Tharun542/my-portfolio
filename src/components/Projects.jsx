@@ -41,6 +41,7 @@ export default function Projects() {
         "Tailwind CSS",
         "Framer Motion",
       ],
+      livedemo: 'https://my-portfolio-swart-seven-96.vercel.app/'
     },
     {
       name: "QTify App",
