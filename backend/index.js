@@ -1,6 +1,8 @@
 import app from "./app.js"
 import dotenv from 'dotenv';
-dotenv.config();
+dotenv.config({
+    path: "./backend/.env"
+});
 const PORT = process.env.PORT || 8082;
 const mongoDB_URL = process.env.MONGODB_URL;
 import mongoose from "mongoose";
