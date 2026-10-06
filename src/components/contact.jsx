@@ -1,8 +1,48 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import robot from "../assets/images/astra---BKFCAy.png";
+const API_URL = import.meta.env.VITE_API_URL;
+console.log("API", API_URL);
 
 export default function Contact() {
+  const [contact, setContact ] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: ""
+  });
+  const [error, setError] = useState([]);
+  
+  const handleChange=(e)=>{
+    setContact({
+      ...contact,
+      [e.target.name]: e.target.value
+    });
+  }
+
+  const handleFormSubmit = async(e) => {
+    e.preventDefault()
+    console.log("hello world");
+    
+    try{
+      const response = await fetch(`${API_URL}/api/contact`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(contact)
+      })
+
+      const data = await response.json();
+      console.log(data);
+      if(!response.ok){
+        setError(data.error)
+      }
+    }catch(error){
+      console.log(error)
+    }
+  }
+
   return (
     <section id="contact" className="relative py-24 px-6 bg-black text-white overflow-hidden">
       <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-cyan-500/10 blur-[150px] rounded-full" />
@@ -46,22 +86,36 @@ export default function Contact() {
               </h2>
               <p className="text-gray-400 mt-4">Have a project, idea, collaboration, or opportunity? I'd love to hear from you.</p>
             </div>
-            <form className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 space-y-6 hover:border-cyan-400 transition-all duration-500">
+            {error.length > 0 && (
+              <div className="mb-6 p-4 rounded-xl border border-red-500/30 bg-red-500/10">
+
+                {error.map((message, index) => (
+                  <p
+                    key={index}
+                    className="text-red-400 text-sm mb-1 last:mb-0"
+                  >
+                   {message}
+                  </p>
+                ))}
+
+              </div>
+            )}
+            <form onSubmit={handleFormSubmit} className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 space-y-6 hover:border-cyan-400 transition-all duration-500">
               <div>
                 <label className="block mb-2 text-gray-300">Full Name</label>
-                <input type="text" placeholder="Enter your full name" className=" w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition"/>
+                <input type="text" name="name" value={contact.name} onChange={handleChange} placeholder="Enter your full name" className=" w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition"/>
               </div>
               <div>
                 <label className="block mb-2 text-gray-300">Email Address</label>
-                <input type="email" placeholder="Enter your email" className=" w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition"/>
+                <input type="email" name="email" value={contact.email} onChange={handleChange} placeholder="Enter your email" className=" w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition"/>
               </div>
               <div>
                 <label className="block mb-2 text-gray-300"> Subject</label>
-                <input type="text" placeholder="Project, Collaboration, Query..." className=" w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition"/>
+                <input type="text" name="subject" value={contact.subject} onChange={handleChange} placeholder="Project, Collaboration, Query..." className=" w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition"/>
               </div>
               <div>
                 <label className="block mb-2 text-gray-300"> Message</label>
-                <textarea rows="5" placeholder="Tell me about your project or idea..." className=" w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 outline-none resize-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition"/>
+                <textarea name="message" value={contact.message} onChange={handleChange} rows="5" placeholder="Tell me about your project or idea..." className=" w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 outline-none resize-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition"/>
               </div>
               <button
                 type="submit"
