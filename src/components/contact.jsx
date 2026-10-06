@@ -38,6 +38,13 @@ export default function Contact() {
       if(!response.ok){
         setError(data.error)
       }
+      setContact({
+      name: "",
+      email: "",
+      subject: "",
+      message: ""
+    });
+    setError([]);
     }catch(error){
       console.log(error)
     }
